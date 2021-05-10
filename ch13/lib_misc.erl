@@ -48,12 +48,14 @@ keep_alive_aux(F) ->
     {Pid, Ref} = spawn_monitor(F),
     io:format("waiting message from{~p, ~p}~n", [Pid, Ref]),
     receive
-        {'DOWN', Ref, process, Pid, Why} ->
-            io:format("~p exited, because of ~p~n", [Pid, Why]),
-            keep_alive_aux(F);
         stop ->
             io:format("stop monitored process ~p~n", [Pid]),
-            Pid ! stop
+            Pid ! stop;
+        {'DOWN', Ref, process, Pid, normal} ->
+            io:format("~p exited, because of normal", [Pid]);
+        {'DOWN', Ref, process, Pid, Why} ->
+            io:format("~p exited abnormally, because of ~p~n", [Pid, Why]),
+            keep_alive_aux(F)
     end.
 keep_alive(F) ->
     spawn(fun () -> keep_alive_aux(F) end).
