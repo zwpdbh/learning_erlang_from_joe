@@ -5,13 +5,11 @@
 worker() ->
     io:format("I am worker ~p~n", [self()]),
     receive
+        stop ->
+            io:format("received stop, so stop work now~n");
         Message ->
             io:format("receive: ~p~n", [Message]),
             worker()
-    after 10000 ->
+    after 2000 ->
             worker()
     end.
-
-%% Start to run a worker on a process
-start_worker() ->
-    spawn(fun () -> worker() end).
