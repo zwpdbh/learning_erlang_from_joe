@@ -80,36 +80,5 @@ stop_cluster01([H|T]) ->
 
 
 
-%% %% the only differences between it with above keep_alive is that it will restart all workers
-%% keep_all_aux(F) ->
-%%     {Pid, Ref} = spawn_monitor(F),
-%%     io:format("waiting message from{~p, ~p}~n", [Pid, Ref]),
-%%     receive
-%%         stop ->
-%%             io:format("stop monitored process ~p~n", [Pid]),
-%%             Pid ! stop;
-%%         {'DOWN', Ref, process, Pid, normal} ->
-%%             io:format("~p exited, because of normal", [Pid]);
-%%         {'DOWN', Ref, process, Pid, Why} ->
-%%             io:format("~p exited abnormally, because of ~p~n", [Pid, Why]),
-%%             stop_cluster
-%%     end.
-%% keep_all(F) ->
-%%     spawn(fun () -> keep_all_aux(F) end).
-
-
-
-%% cluster02(L) ->
-%%     lists:reverse(cluster02(L, [])).
-%% cluster02([], Acc) ->
-%%     Acc;
-%% cluster02([H|T], Acc) ->
-%%     cluster02(T, [spawn(fun H)|Acc]).
-
-%% monitor_cluster02(L) ->
-%%     monitor_cluster02(L, []).
-%% monitor_cluster02([], Acc) ->
-%%     Acc;
-%% monitor_cluster02([Pid|T], Acc) ->
-
-%%     kill_all_alive
+%% For problem 06, it makes us to have a global view of the monitoring process.
+%% Therefore, we could kill all the monitored process by sending stop to all the monitoring process.
