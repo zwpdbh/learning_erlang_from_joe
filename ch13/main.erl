@@ -21,3 +21,9 @@ q04() ->
 %% test with Num work, all use the worker function as work.
 q05(Num) ->
     lib_misc:cluster01([fun worker:worker/0 || _ <- lists:seq(1, Num)]).
+
+
+%% starts and monitor several worker process. If any of the worker process die abnormally,
+%% Kill all the worker processes and restart them all.
+q06(Num) ->
+    lib_misc:cluster02([fun worker:worker/0 || _ <- lists:seq(1, Num)]).
