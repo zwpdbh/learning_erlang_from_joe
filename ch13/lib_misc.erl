@@ -79,6 +79,7 @@ stop_cluster01([H|T]) ->
           end).
 
 
-
-%% For problem 06, it makes us to have a global view of the monitoring process.
-%% Therefore, we could kill all the monitored process by sending stop to all the monitoring process.
+%% For question 06:
+%% if one of worker process is exiting with abnormally.
+%% just stop cluster which stop both monitoring and monitored process
+%% After make sure all monitoring process have been exit, restart cluster
