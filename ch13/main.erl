@@ -11,11 +11,11 @@ q02() ->
 
 %% start a function and kill its execution after a certain time.
 q03() ->
-    lib_misc:on_timeout(worker, worker, [], 10000).
+    lib_misc:on_exitout(worker, worker, [], 10000).
 
 %% monitor a function and restart it if it dies
 q04() ->
-    lib_misc:keep_alive(worker, worker, []).
+    lib_misc:on_exit(worker, worker, []).
 
 %% starts and monitor several workers. If a worker failed, restart it.
 %% test with Num work, all use the worker function as work.
@@ -26,4 +26,4 @@ q05(Num) ->
 %% starts and monitor several worker process. If any of the worker process die abnormally,
 %% Kill all the worker processes and restart them all.
 q06(Num) ->
-    lib_misc:cluster02([fun worker:worker/0 || _ <- lists:seq(1, Num)]).
+    lib_misc:start_cluster(Num).
