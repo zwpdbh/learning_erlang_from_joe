@@ -7,7 +7,7 @@ log(Pid, Start, End, Why) ->
 %% start a function and print out how long it has been lived
 q02() ->
     Pid = spawn(worker, worker, []),
-    lib_misc:on_exit(Pid, fun log/4).
+    lib_misc:on_exit01(Pid, fun log/4).
 
 %% start a function and kill its execution after a certain time.
 q03() ->
@@ -25,5 +25,9 @@ q05(Num) ->
 
 %% starts and monitor several worker process. If any of the worker process die abnormally,
 %% Kill all the worker processes and restart them all.
-q06(Num) ->
-    lib_misc:start_cluster(Num).
+q06(Time) ->
+    lib_misc:on_exit(fun () ->
+                             lib_misc:on_exit(fun () ->
+                                                      worker:worker()
+                                              end, Time)
+                     end).

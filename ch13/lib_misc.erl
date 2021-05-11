@@ -2,7 +2,7 @@
 -compile([export_all]).
 
 %% Watch the process Pid and evaluates Fun(Why) if the process exits with the reason Why
-on_exit(Pid, Func) ->
+on_exit01(Pid, Func) ->
     spawn(fun () ->
                   Start = erlang:system_time(),
                   Ref = monitor(process, Pid),
@@ -59,6 +59,27 @@ on_exit_aux(F) ->
     end.
 on_exit(F) ->
     spawn(fun () -> on_exit_aux(F) end).
+
+
+on_exit_aux(F, Time) ->
+    {Pid, Ref} = spawn_monitor(F),
+    io:format("waiting message from{~p, ~p}~n", [Pid, Ref]),
+    receive
+        stop -> % this pattern makes us could stop workers by their monitoring process
+            io:format("stop monitored process ~p~n", [Pid]),
+            Pid ! stop; % stop worker process normally
+        {'DOWN', Ref, process, Pid, normal} ->
+            io:format("~p exited, because of normal~n", [Pid]);
+        {'DOWN', Ref, process, Pid, Why} ->
+            io:format("~p exited abnormally, because of ~p~n", [Pid, Why]),
+            on_exit_aux(F, Time)
+    after
+        Time ->
+            io:format("timeout after ~p seconds~n", [Time/1000]),
+            exit(Pid, kill)
+    end.
+on_exit(F, Time) ->
+    spawn(fun () -> on_exit_aux(F, Time) end).
 
 
 %% L is a list of functions as worker
