@@ -13,20 +13,20 @@ on_exit(Pid, Func) ->
                   end
           end).
 
-
-on_exitout_aux(Mod, Func, Arity, Time) ->
+%% On
+on_exit_aux(Mod, Func, Arity, Time) ->
     {Pid, Ref} = spawn_monitor(Mod, Func, Arity),
     io:format("waiting message from{~p, ~p}~n", [Pid, Ref]),
     receive
         {'DOWN', Ref, process, Pid, Why} ->
             io:format("~p exited, because of ~p~n", [Pid, Why]),
-            on_exitout_aux(Mod, Func, Arity, Time)
+            on_exit_aux(Mod, Func, Arity, Time)
     after Time ->
             io:format("timeout after ~p seconds~n", [Time/1000]),
             exit(Pid, kill)
     end.
-on_exitout(Mod, Func, Arity, Time) ->
-    spawn(fun () -> on_exitout_aux(Mod, Func, Arity, Time) end).
+on_exit(Mod, Func, Arity, Time) ->
+    spawn(fun () -> on_exit_aux(Mod, Func, Arity, Time) end).
 
 
 on_exit_aux(Mod, Func, Arity) ->

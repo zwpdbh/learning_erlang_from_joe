@@ -11,7 +11,7 @@ q02() ->
 
 %% start a function and kill its execution after a certain time.
 q03() ->
-    lib_misc:on_exitout(worker, worker, [], 10000).
+    lib_misc:on_exit(worker, worker, [], 10000).
 
 %% monitor a function and restart it if it dies
 q04() ->
