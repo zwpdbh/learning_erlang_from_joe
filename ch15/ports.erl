@@ -5,18 +5,18 @@
 start(ExtPrg) ->
     spawn_link(?MODULE, init, [ExtPrg]).
 stop() ->
-    complex ! stop.
+    port ! stop.
 
 send(Y) -> call_port({msg, Y}).
 call_port({msg, Msg}) ->
-    complex ! {call, self(), Msg},
+    port ! {call, self(), Msg},
     receive
-        {complex, Result} ->
+        {port, Result} ->
             Result
     end.
 
 init(ExtPrg) ->
-    register(complex, self()),
+    register(port, self()),
     process_flag(trap_exit, true),
     Port = open_port({spawn, ExtPrg}, []),
     loop(Port).
@@ -26,7 +26,7 @@ loop(Port) ->
         {call, Caller, Msg} ->
             Port ! {self(), {command, Msg++[10]}},
             Data = receive_all(Port, 100),
-            Caller ! {complex, Data},
+            Caller ! {port, Data},
             loop(Port);
         stop ->
             Port ! {self(), close},
